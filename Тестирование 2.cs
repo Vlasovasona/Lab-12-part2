@@ -8,18 +8,32 @@ namespace Хеш_таблица
     {
         //блок Exception
         [TestMethod]
-        public void TestCreateException() //тестирование ошибки при попытке формирования пустой таблицы
+        public void Test_CreateTable_Exception() //тестирование ошибки при попытке формирования пустой таблицы
         {
-            Assert.ThrowsException<Exception>(() => {
+            Assert.ThrowsException<Exception>(() =>
+            {
                 MyHashTable<Library_10.Instrument> table = new MyHashTable<Library_10.Instrument>(-1);
             });
         }
 
         [TestMethod]
-        public void TestPrintNullTableException() //тестирование ошибки при попытке печати пустой таблицы
+        public void Test_AddExistingElement_Exception() //тестирование ошибки при попытке формирования пустой таблицы
+        {
+            MyHashTable<Library_10.Instrument> table = new MyHashTable<Library_10.Instrument>(1);
+            Instrument tool = new Instrument("q", 1);
+            table.AddPoint(tool);
+            Assert.ThrowsException<Exception>(() =>
+            {
+                table.AddPoint(tool);
+            });
+        }
+
+        [TestMethod]
+        public void Test_PrintNullTable_Exception() //тестирование ошибки при попытке печати пустой таблицы
         {
             MyHashTable<Library_10.Instrument> table = new MyHashTable<Library_10.Instrument>();
-            Assert.ThrowsException<Exception>(() => {
+            Assert.ThrowsException<Exception>(() =>
+            {
                 table.Print();
             });
         }//блок Exception закончен
@@ -38,14 +52,23 @@ namespace Хеш_таблица
             MyHashTable<Library_10.Instrument> table = new MyHashTable<Library_10.Instrument>(5);
             HandTool tool = new HandTool();
             table.AddPoint(tool);
-            Assert.IsTrue(table.Contains(tool)); 
+            Assert.IsTrue(table.Contains(tool));
+        }
+
+        [TestMethod]
+        public void TestAddCount() //тестирование увеличения Count после добавления элемента в таблицу
+        {
+            MyHashTable<Library_10.Instrument> table = new MyHashTable<Library_10.Instrument>(5);
+            HandTool tool = new HandTool();
+            table.AddPoint(tool);
+            Assert.AreEqual(6, table.Count);
         }
 
         //тестиование удаления элемента из таблицы
         [TestMethod]
-        public void TestRemoveTruePointFromHashTable() //тестирование добавления удаления существующего элемента из таблицы
+        public void TestRemovePointFromHashTableTrue() //тестирование добавления удаления существующего элемента из таблицы
         {
-            MyHashTable<Library_10.Instrument> table = new MyHashTable<Library_10.Instrument>(5);
+            MyHashTable<Library_10.Instrument> table = new MyHashTable<Library_10.Instrument>(1);
             HandTool tool = new HandTool();
             table.AddPoint(tool);
             table.RemoveData(tool);
@@ -53,26 +76,50 @@ namespace Хеш_таблица
         }
 
         [TestMethod]
-        public void TestRemoveFalsePointFromHashTable() //тестирование удаления несуществующего элемента из таблицы
+        public void TestRemovePointFromHashTable_False() //тестирование удаления несуществующего элемента из таблицы
         {
-            MyHashTable<Library_10.Instrument> table = new MyHashTable<Library_10.Instrument>(5);
+            MyHashTable<Library_10.Instrument> table = new MyHashTable<Library_10.Instrument>(1);
             HandTool tool = new HandTool();
+            table.AddPoint(tool);
+            table.RemoveData(tool);
+            Assert.IsFalse(table.Contains(tool));
+        }
+
+        [TestMethod]
+        public void TestRemovePointFromHashTable_OutOfKey_False() //тестирование удаления несуществующего элемента из таблицы
+        {
+            MyHashTable<Library_10.Instrument> table = new MyHashTable<Library_10.Instrument>(1);
+            Instrument tool = new Instrument("Бензопила дружба нового поколения", 9999);
             Assert.IsFalse(table.RemoveData(tool));
         }
 
         [TestMethod]
-        public void TestRemovePointFromHashTable() //если несколько элементов в цепочке и нам нужно удалить элемент из середины или из конца
+        public void TestRemovePoint_FromBeginingOfTableTable() //тестирование удаления первого в цепочке элемента из таблицы
         {
-            MyHashTable<Library_10.Instrument> table = new MyHashTable<Library_10.Instrument>(5);
-            HandTool tool = new HandTool();
-            table.AddPoint(tool);
-            table.AddPoint(tool);
-            Assert.IsTrue(table.RemoveData(tool));
+            MyHashTable<Library_10.Instrument> table = new MyHashTable<Library_10.Instrument>(1);
+            Instrument tool2 = new Instrument("Перфоратор", 98);
+            Instrument tool3 = new Instrument("Штангенциркуль", 85);
+            Instrument tool4 = new Instrument("Микрометр", 41);
+            Instrument tool5 = new Instrument("RRR", 1234);
+            Instrument tool6 = new Instrument("RRR", 1235);
+
+            table.AddPoint(tool2);
+            table.AddPoint(tool3);
+            table.AddPoint(tool4);
+            table.AddPoint(tool5);
+            table.AddPoint(tool6);
+
+            PointHash<Instrument> tool = new PointHash<Instrument>();
+            PointHash<Instrument> pointHash = table.GetFirstValue();
+            tool = pointHash;
+            table.RemoveData(tool.Data);
+            Assert.IsFalse(table.Contains(tool.Data));
         }
+
 
         //тестирование метода Contains
         [TestMethod]
-        public void TestContainsPointTrue() 
+        public void TestContainsPointTrue()
         {
             MyHashTable<Library_10.Instrument> table = new MyHashTable<Library_10.Instrument>(1);
             HandTool tool = new HandTool();
@@ -109,6 +156,43 @@ namespace Хеш_таблица
         {
             PointHash<Instrument> p = new PointHash<Instrument>();
             Assert.IsNull(p.Pred);
+        }
+
+        //тестирование методов ToString и GetHashCode для класса PointHash
+        [TestMethod]
+        public void ToString_WhenDataIsNull_ReturnEmptyString()
+        {
+            PointHash<Instrument> point = new PointHash<Library_10.Instrument>();
+            string result = point.ToString();
+            Assert.AreEqual("", result);
+        }
+
+        [TestMethod]
+        public void ToString_WhenDataIsNotNull_ReturnDataToString()
+        {
+            Library_10.Instrument tool = new Instrument();
+            tool.RandomInit();
+            PointHash<Instrument> point = new PointHash<Instrument>(tool);
+            string result = point.ToString();
+            Assert.AreEqual(tool.ToString(), result);
+        }
+
+        [TestMethod]
+        public void GetHashCode_WhenDataIsNull_ReturnZero()
+        {
+            PointHash<Instrument> point = new PointHash<Library_10.Instrument>();
+            int result = point.GetHashCode();
+            Assert.AreEqual(0, result);
+        }
+
+        [TestMethod]
+        public void GetHashCode_WhenDataIsNotNull_ReturnDataHashCode()
+        {
+            Library_10.Instrument tool = new Instrument();
+            tool.RandomInit();
+            PointHash<Instrument> point = new PointHash<Library_10.Instrument>(tool);
+            int result = point.GetHashCode();
+            Assert.AreEqual(tool.GetHashCode(), result);
         }
     }
 }
