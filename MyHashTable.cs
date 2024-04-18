@@ -138,7 +138,7 @@ namespace Лаба12_часть2
             return false;
         }
 
-        public PointHash<T> GetFirstValue()
+        public PointHash<T> GetFirstValue() //вспомогательный метод для нахождения первого элемента цепочки для тестов
         {
             PointHash<T> p = table[0];
             return p;
