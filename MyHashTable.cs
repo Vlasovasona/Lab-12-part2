@@ -1,17 +1,22 @@
-﻿using Library_10;
+using Library_10;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Лаба12_часть2
 {
     public class MyHashTable<T> where T: IInit, ICloneable, new()
     {
         PointHash<T>?[] table; //можем присвоить нулевую ссылку
+
+        sbyte count = 0; //счетчик элементов в списке
+
         public int Capacity => table.Length;
+        public sbyte Count => count;
 
         public MyHashTable() { }
 
@@ -29,7 +34,7 @@ namespace Лаба12_часть2
 
         public void Print() //метод для вывода хеш-таблицы
         {
-            if (table == null) 
+            if (table == null || count == 0) 
                 throw new Exception("empty table");
             for (int i = 0; i < table.Length; i++)
             {
@@ -50,22 +55,27 @@ namespace Лаба12_часть2
 
         public void AddPoint(T data) //ф-ция добавления элемента в таблицу
         {
-            int index = GetIndex(data);
-            //позиция пустая
-            if (table[index] == null)
-                table[index] = new PointHash<T>(data);
+            if (Contains(data)) throw new Exception("Такой элемент уже есть в таблице");
             else
             {
-                PointHash<T>? current = table[index];
-
-                while (current.Next != null)
+                count++;
+                int index = GetIndex(data);
+                //позиция пустая
+                if (table[index] == null)
+                    table[index] = new PointHash<T>(data);
+                else
                 {
-                    if (current.Equals(data)) //элементы не должны дублироваться
-                        return;
-                    current = current.Next;
+                    PointHash<T>? current = table[index];
+
+                    while (current.Next != null)
+                    {
+                        if (current.Equals(data)) //элементы не должны дублироваться
+                            return;
+                        current = current.Next;
+                    }
+                    current.Next = new PointHash<T>(data); //созданиенового элемента, его адрес присваиваем в следующий от текущего
+                    current.Next.Pred = current; //теперь current.Next - новый элемент, связываем его с предыдущим
                 }
-                current.Next = new PointHash<T>(data); //созданиенового элемента, его адрес присваиваем в следующий от текущего
-                current.Next.Pred = current; //теперь current.Next - новый элемент, связываем его с предыдущим
             }
         }
 
@@ -90,9 +100,9 @@ namespace Лаба12_часть2
 
         public bool RemoveData(T data) //функция удаления элемента из таблицы
         {
+            if (count == 0) throw new Exception("Таблица пустая, удаление невозможно");
             PointHash<T>? current; 
             int index = GetIndex(data); //генерируем ключ
-            if (table == null) throw new Exception("empty table"); //проверка на пустоту
             if (table[index] == null) return false; //если по вычисленному ключу ничего не найдено, возвращаем false
             if (table[index].Data.Equals(data)) //проверяем на сходство элементы, которые находятся под данным ключом
             {
@@ -103,6 +113,7 @@ namespace Лаба12_часть2
                     table[index] = table[index].Next; 
                     table[index].Pred = null;
                 }
+                count--;
                 return true;        
             }
             else //если несколько элементов в цепочке и нам нужно удалить элемент из середины или из конца
@@ -118,12 +129,19 @@ namespace Лаба12_часть2
                         current.Pred = null; //обнуление сслыки с текущего на левый
                         if (next != null) //проверка что следующий элемент существует
                             next.Pred = pred; //ссылку с крайнеко справа ставим на крайний от current слева
+                        count--;
                         return true;
                     }
                     current = current.Next; //перезод к следующему элементу цепочки
                 }
             }
             return false;
+        }
+
+        public PointHash<T> GetFirstValue()
+        {
+            PointHash<T> p = table[0];
+            return p;
         }
 
         int GetIndex(T data) //получение ключа
