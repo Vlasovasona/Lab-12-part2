@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Diagnostics.Metrics;
 using Library_10;
 using System.Collections.Generic;
@@ -19,21 +19,39 @@ namespace Лаба12_часть2
             return number; //ф-ция принимает значение введенного корректного числа
         }
 
-        static void SearchAndRemove(MyHashTable<Library_10.Instrument> table)
+        static void Search(MyHashTable<Library_10.Instrument> table)
+        {
+            Library_10.Instrument tool = new Library_10.Instrument();
+            Console.WriteLine("Введите элемент, который нужно найти");
+            tool.Init();
+            Console.WriteLine($"Выполним поиск элемента {tool} в хеш-таблице:");
+            Console.WriteLine(table.Contains(tool));
+            Console.WriteLine("Операция прошла успешно");
+        }
+
+        static void DeleteElement(MyHashTable<Library_10.Instrument> table)
         {
             Library_10.Instrument tool = new Library_10.Instrument();
             Console.WriteLine("Введите элемент, который нужно найти и удалить");
             tool.Init();
-            Console.WriteLine($"Выполним поиск элемента {tool} в хеш-таблице:");
-            Console.WriteLine(table.Contains(tool));
+            Console.WriteLine($"Выполним удаление элемента {tool} в хеш-таблице");
             if (table.Contains(tool))
             {
-                Console.WriteLine("Выполним удаление этого элемента из хеш-таблицы");
                 table.RemoveData(tool);
-                Console.WriteLine("Выполним поиск элемента еще раз, чтобы убедиться в том, что он удален:");
-                Console.WriteLine(table.Contains(tool));
+                if (table.Count == 0) Console.WriteLine("В ходе удаления была получена пустая таблица");
             }
-            Console.WriteLine("Операция прошла успешно");
+            else
+                throw new Exception("Элемент не найден в таблице. Удаление невозможно");
+            Console.WriteLine("Удаление выполнено");
+        }
+
+        static void AddElementToTable(MyHashTable<Library_10.Instrument> table)
+        {
+            Library_10.Instrument tool = new Library_10.Instrument();
+            tool.Init();
+            Console.WriteLine($"Добавим в хеш-таблицу элемент {tool}");
+            table.AddPoint(tool);
+            Console.WriteLine("Операция выпонена");
         }
 
         static void Main(string[] args)
@@ -43,10 +61,11 @@ namespace Лаба12_часть2
             do
             {
                 Console.WriteLine("1. Сформировать хеш-таблицу");
-                Console.WriteLine("2. Выполниить поиск, удаление и посик удаленного элемента в хеш-таблице");
+                Console.WriteLine("2. Выполниить поиск элемента в хеш-таблице");
                 Console.WriteLine("3. Вывести хеш-таблицу");
                 Console.WriteLine("4. Добавить элемент");
-                Console.WriteLine("5. Выход");
+                Console.WriteLine("5. Удалить элемент");
+                Console.WriteLine("6. Выход");
                 answer1 = InputSbyteNumber();
 
                 switch (answer1)
@@ -65,21 +84,26 @@ namespace Лаба12_часть2
                             }
                             break;
                         }
-                    case 2: //поиск и удаление
+                    case 2: //поиск
                         {
-                            try
+                            if (table.Count <= 0) Console.WriteLine("Таблица пустая или не создана");
+                            else
                             {
-                                SearchAndRemove(table);
-                            }
-                            catch (Exception e)
-                            {
-                                Console.WriteLine($"Выполнение провалено: {e.Message}");
-                                Console.WriteLine("Возможно вы не создали таблицу");
+                                try
+                                {
+                                    Search(table);
+                                }
+                                catch (Exception e)
+                                {
+                                    Console.WriteLine($"Выполнение провалено: {e.Message}");
+                                    Console.WriteLine("Возможно вы не создали таблицу");
+                                }
                             }
                             break;
                         }
                     case 3: //вывод списка
                         {
+                            Console.WriteLine(table.Count);
                             try
                             {
                                 table.Print();
@@ -90,24 +114,39 @@ namespace Лаба12_часть2
                             }
                             break;
                         }
-                    case 4:
+                    case 4: //добавление
                         {
-                            try
+                            if (table.Count <= 0) Console.WriteLine("Таблица пустая или не создана");
+                            else
                             {
-                                Library_10.Instrument tool = new Library_10.Instrument();
-                                tool.Init();
-                                Console.WriteLine($"Добавим в хеш-таблицу элемент {tool}");
-                                table.AddPoint(tool);
-                                Console.WriteLine("Операция выпонена");
-                            }
-                            catch (Exception e)
-                            {
-                                Console.WriteLine($"Выполнение провалено: {e.Message}");
-                                Console.WriteLine("Возможно вы не создали таблицу");
+                                try
+                                {
+                                    AddElementToTable(table);
+                                }
+                                catch (Exception e)
+                                {
+                                    Console.WriteLine($"Выполнение провалено: {e.Message}");
+                                }
                             }
                             break;
                         }
-                    case 5: //выход из меню
+                    case 5://удаление 
+                        {
+                            if (table.Count <= 0) Console.WriteLine("Таблица пустая или не создана");
+                            else
+                            {
+                                try
+                                {
+                                    DeleteElement(table);
+                                }
+                                catch (Exception e)
+                                {
+                                    Console.WriteLine($"Выполнение провалено: {e.Message}");
+                                }
+                            }
+                            break;
+                        }
+                    case 6: //выход из меню
                         {
                             Console.WriteLine("Демонстрация завершена");
                             break;
@@ -118,7 +157,7 @@ namespace Лаба12_часть2
                             break;
                         }
                 }
-            } while (answer1 != 5); //цикл повторяется пока пользователь не введет число 4
+            } while (answer1 != 6); //цикл повторяется пока пользователь не введет число 4
         }
     }
 }
