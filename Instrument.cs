@@ -93,6 +93,7 @@ namespace Library_10
 
         public virtual void Init()
         {
+            Console.WriteLine("Введите id");
             try
             {
                 id.number = int.Parse(Console.ReadLine());
