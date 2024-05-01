@@ -11,31 +11,31 @@ namespace Лаба12_часть2
 {
     public class MyHashTable<T> where T: IInit, ICloneable, new()
     {
-        PointHash<T>?[] table; //можем присвоить нулевую ссылку
+        public PointHash<T>?[] table; //можем присвоить нулевую ссылку
 
-        sbyte count = 0; //счетчик элементов в списке
+        public sbyte count = 0; //счетчик элементов в списке
 
         public int Capacity => table.Length;
         public sbyte Count => count;
 
-        public MyHashTable() { }
+        public MyHashTable() { } //конструктор без параметров
 
         //конструктор с параметром
-        public MyHashTable(int length)
+        public MyHashTable(int length) //конструктор с параметром длины
         {
-            if (length <= 0) throw new Exception("Размер не может быть нулевым или отрицательным");
+            if (length <= 0) throw new ArgumentException("Размер не может быть нулевым или отрицательным");
             table = new PointHash<T>[length];
             for (int i = 0; i < table.Length; i++)
             {
-                T value = PointHash<T>.MakeRandomItem();
-                AddPoint(value);
+                T value = PointHash<T>.MakeRandomItem(); //создание рандомного узла
+                AddPoint(value); //добавляем узел в таблицу
             }
         }
 
         public void Print() //метод для вывода хеш-таблицы
         {
             if (table == null || count == 0) 
-                throw new Exception("empty table");
+                throw new ArgumentException("empty table");
             for (int i = 0; i < table.Length; i++)
             {
                 if (table[i] == null) Console.WriteLine(i + " : ");
@@ -55,23 +55,23 @@ namespace Лаба12_часть2
 
         public void AddPoint(T data) //ф-ция добавления элемента в таблицу
         {
-            if (Contains(data)) throw new Exception("Такой элемент уже есть в таблице");
+            if (Contains(data)) throw new ArgumentException("Такой элемент уже есть в таблице");
             else
             {
                 count++;
                 int index = GetIndex(data);
                 //позиция пустая
                 if (table[index] == null)
-                    table[index] = new PointHash<T>(data);
+                    table[index] = new PointHash<T>(data); //просто добавляем новый элемент
                 else
                 {
-                    PointHash<T>? current = table[index];
+                    PointHash<T>? current = table[index]; //текущий = первый в цепочке
 
-                    while (current.Next != null)
+                    while (current.Next != null) //пока не дошли до конца цепочки
                     {
                         if (current.Equals(data)) //элементы не должны дублироваться
                             return;
-                        current = current.Next;
+                        current = current.Next; //переходим к следующему
                     }
                     current.Next = new PointHash<T>(data); //созданиенового элемента, его адрес присваиваем в следующий от текущего
                     current.Next.Pred = current; //теперь current.Next - новый элемент, связываем его с предыдущим
@@ -82,7 +82,7 @@ namespace Лаба12_часть2
         public bool Contains(T data) //функция поиска элемента в таблице
         {
             int index = GetIndex(data);
-            if (table == null) throw new Exception("empty table");
+            if (table == null) throw new ArgumentException("empty table");
             if (table[index] == null) return false; //цепочка пустая, элемента нет
             if (table[index].Data.Equals(data)) return true; //попали на нужный элемент
             else
@@ -100,7 +100,7 @@ namespace Лаба12_часть2
 
         public bool RemoveData(T data) //функция удаления элемента из таблицы
         {
-            if (count == 0) throw new Exception("Таблица пустая, удаление невозможно");
+            if (count == 0) throw new ArgumentException("Таблица пустая, удаление невозможно");
             PointHash<T>? current; 
             int index = GetIndex(data); //генерируем ключ
             if (table[index] == null) return false; //если по вычисленному ключу ничего не найдено, возвращаем false
@@ -138,15 +138,28 @@ namespace Лаба12_часть2
             return false;
         }
 
-        public PointHash<T> GetFirstValue() //вспомогательный метод для нахождения первого элемента цепочки для тестов
+        public PointHash<T> GetFirstValue() //метод для нахождения первого элемента хеш-таблицы (только для тестов)
         {
-            PointHash<T> p = table[0];
-            return p;
+            for (int i = 0; i < table.Length; i++)
+            {
+                if (table[i] != null)
+                {
+                    PointHash<T> p = table[i];
+                    return p;
+                }
+            }
+            return null;
         }
 
         int GetIndex(T data) //получение ключа
         {
             return Math.Abs(data.GetHashCode()) % Capacity;
+        }
+
+        public void Clear()
+        {
+            table = null;
+            GC.Collect();
         }
     }
 }
