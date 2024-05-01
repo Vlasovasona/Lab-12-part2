@@ -119,7 +119,7 @@ namespace Хеш_таблица
 
         //тестирование метода Contains
         [TestMethod]
-        public void TestContainsPointTrue()
+        public void TestContainsPointTrue() //метод Contains когда элемент есть в таблице
         {
             MyHashTable<Library_10.Instrument> table = new MyHashTable<Library_10.Instrument>(1);
             HandTool tool = new HandTool();
@@ -128,7 +128,7 @@ namespace Хеш_таблица
         }
 
         [TestMethod]
-        public void TestContainsPointFalse()
+        public void TestContainsPointFalse() //когда элемента нет в таблице
         {
             MyHashTable<Library_10.Instrument> table = new MyHashTable<Library_10.Instrument>(1);
             HandTool tool = new HandTool();
@@ -137,7 +137,7 @@ namespace Хеш_таблица
 
         //тестирование ToString для PointHash
         [TestMethod]
-        public void TestToStringPoint()
+        public void TestToStringPoint() //тестирование ToString для класса узла
         {
             HandTool tool = new HandTool();
             PointHash<Library_10.Instrument> p = new PointHash<Library_10.Instrument>(tool);
@@ -145,14 +145,14 @@ namespace Хеш_таблица
         }
 
         [TestMethod]
-        public void TestConstructWhithoutParamNext()
+        public void TestConstructWhithoutParamNext() //конструктор узла без параметров, Next = null
         {
             PointHash<Instrument> p = new PointHash<Instrument>();
             Assert.IsNull(p.Next);
         }
 
         [TestMethod]
-        public void TestConstructWhithoutParamPred()
+        public void TestConstructWhithoutParamPred() //конструктор узла без параметров, Pred = null
         {
             PointHash<Instrument> p = new PointHash<Instrument>();
             Assert.IsNull(p.Pred);
@@ -160,7 +160,7 @@ namespace Хеш_таблица
 
         //тестирование методов ToString и GetHashCode для класса PointHash
         [TestMethod]
-        public void ToString_WhenDataIsNull_ReturnEmptyString()
+        public void ToString_WhenDataIsNull_ReturnEmptyString() //конструктор без параметров метод ToString
         {
             PointHash<Instrument> point = new PointHash<Library_10.Instrument>();
             string result = point.ToString();
@@ -178,7 +178,7 @@ namespace Хеш_таблица
         }
 
         [TestMethod]
-        public void GetHashCode_WhenDataIsNull_ReturnZero()
+        public void GetHashCode_WhenDataIsNull_ReturnZero() //тестирование GetHashCode для узла, созданного с помощью конструктора без параметров
         {
             PointHash<Instrument> point = new PointHash<Library_10.Instrument>();
             int result = point.GetHashCode();
@@ -186,7 +186,7 @@ namespace Хеш_таблица
         }
 
         [TestMethod]
-        public void GetHashCode_WhenDataIsNotNull_ReturnDataHashCode()
+        public void GetHashCode_WhenDataIsNotNull_ReturnDataHashCode() //тестиование GetHashCode для заполненного узла
         {
             Library_10.Instrument tool = new Instrument();
             tool.RandomInit();
