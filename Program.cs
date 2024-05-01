@@ -19,33 +19,33 @@ namespace Лаба12_часть2
             return number; //ф-ция принимает значение введенного корректного числа
         }
 
-        static void Search(MyHashTable<Library_10.Instrument> table)
+        static void Search(MyHashTable<Library_10.Instrument> table) //метод для поиска элемента в таблице
         {
             Library_10.Instrument tool = new Library_10.Instrument();
             Console.WriteLine("Введите элемент, который нужно найти");
             tool.Init();
             Console.WriteLine($"Выполним поиск элемента {tool} в хеш-таблице:");
-            Console.WriteLine(table.Contains(tool));
+            Console.WriteLine(table.Contains(tool)); //вывод булевого значения
             Console.WriteLine("Операция прошла успешно");
         }
 
-        static void DeleteElement(MyHashTable<Library_10.Instrument> table)
+        static void DeleteElement(MyHashTable<Library_10.Instrument> table) //удаление элемента из таблицы
         {
             Library_10.Instrument tool = new Library_10.Instrument();
             Console.WriteLine("Введите элемент, который нужно найти и удалить");
             tool.Init();
             Console.WriteLine($"Выполним удаление элемента {tool} в хеш-таблице");
-            if (table.Contains(tool))
+            if (table.Contains(tool)) //если элемент, который нужно удалить, находится в таблице
             {
-                table.RemoveData(tool);
+                table.RemoveData(tool); //проводим удаление
                 if (table.Count == 0) Console.WriteLine("В ходе удаления была получена пустая таблица");
             }
             else
-                throw new Exception("Элемент не найден в таблице. Удаление невозможно");
+                throw new ArgumentException("Элемент не найден в таблице. Удаление невозможно"); //вывод ошибки
             Console.WriteLine("Удаление выполнено");
         }
 
-        static void AddElementToTable(MyHashTable<Library_10.Instrument> table)
+        static void AddElementToTable(MyHashTable<Library_10.Instrument> table) //метод для добавления элемента в таблицу
         {
             Library_10.Instrument tool = new Library_10.Instrument();
             tool.Init();
