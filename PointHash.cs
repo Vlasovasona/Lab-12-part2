@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,13 +12,6 @@ namespace Лаба12_часть2
         public T? Data { get; set; }
         public PointHash<T>? Next { get; set; }
         public PointHash<T>? Pred { get; set; }
-
-        //public static PointHash<T> MakeRandomData() //создание элемента типа <T>
-        //{
-        //    T data = new T(); //должно иметь конструктор без параметров 
-        //    data.RandomInit(); //рандомно заполняем 
-        //    return new PointHash<T>(data); //создаем новый элемент 
-        //}
 
         public static T MakeRandomItem() //создание информационного поля
         {
